@@ -37,6 +37,7 @@
             this.lstTables = new System.Windows.Forms.CheckedListBox();
             this.btnSelectAll = new System.Windows.Forms.Button();
             this.lstInfo = new System.Windows.Forms.CheckedListBox();
+            this.btnGenerate = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // lblTitle
@@ -125,11 +126,23 @@
             this.lstInfo.Size = new System.Drawing.Size(300, 340);
             this.lstInfo.TabIndex = 8;
             // 
+            // btnGenerate
+            // 
+            this.btnGenerate.AutoSize = true;
+            this.btnGenerate.Location = new System.Drawing.Point(411, 518);
+            this.btnGenerate.Name = "btnGenerate";
+            this.btnGenerate.Size = new System.Drawing.Size(239, 31);
+            this.btnGenerate.TabIndex = 9;
+            this.btnGenerate.Text = "Generate HTML Documentation";
+            this.btnGenerate.UseVisualStyleBackColor = true;
+            this.btnGenerate.Click += new System.EventHandler(this.btnGenerate_Click);
+            // 
             // SelectObjects
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 21F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(761, 527);
+            this.ClientSize = new System.Drawing.Size(761, 570);
+            this.Controls.Add(this.btnGenerate);
             this.Controls.Add(this.lstInfo);
             this.Controls.Add(this.btnSelectAll);
             this.Controls.Add(this.lstTables);
@@ -160,5 +173,6 @@
         private System.Windows.Forms.CheckedListBox lstTables;
         private System.Windows.Forms.Button btnSelectAll;
         private System.Windows.Forms.CheckedListBox lstInfo;
+        private System.Windows.Forms.Button btnGenerate;
     }
 }

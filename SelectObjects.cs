@@ -14,7 +14,19 @@ namespace DbDocjc
     public partial class SelectObjects : Form
     {
         public string Database { get; private set; }
-        public SelectObjects(string database)
+
+        private readonly Dictionary<string, Info> Information = new Dictionary<string, Info>()
+        {
+            {"COL", new Info {key="COL", name="Columns",initiallyChecked=true } },
+            {"IDX", new Info {key="IDX",name="Indexes",initiallyChecked=true } },
+            {"FKY", new Info {key="FKY",name="Foreign Keys",initiallyChecked=true } },
+            {"SQL", new Info {key="SQL",name="Create SQL",initiallyChecked=false } },
+            {"SPF", new Info {key="SPF",name="Stored Procedures and Functions",initiallyChecked=false } },
+            {"TRI", new Info {key="TRI",name="Triggers",initiallyChecked=false } },
+            {"EVT", new Info {key="EVT",name="Events",initiallyChecked=false } },
+        };
+
+    public SelectObjects(string database)
         {
             InitializeComponent();
             txtOutputPath.Text = Properties.Settings.Default.OutputPath;
@@ -61,11 +73,11 @@ namespace DbDocjc
 
         private void SetUpInfoList()
         {
-            string[] info = { "Columns", "Indexes", "Foreign Keys", "Stored Procedures and Functions", "Triggers", "Events" };
-            for (int i= 0;i< info.Length;i++)
+            foreach (KeyValuePair<string,Info> kv in Information )
             {
-                lstInfo.Items.Add(info[i]);
-                if (i < 3)
+                Info info = kv.Value;
+                int i = lstInfo.Items.Add(info.name);
+                if (info.initiallyChecked)
                     lstInfo.SetItemChecked(i, true);
             }
         }
@@ -91,5 +103,25 @@ namespace DbDocjc
                 btnSelectAll.Text = sSelect;
             }
         }
+
+        private void btnGenerate_Click(object sender, EventArgs e)
+        {
+
+        }
     }
+
+    public class Info
+    {
+        public Info()
+        {
+            include = false;
+        }
+        
+        public string key { get; set; }
+        public string name { get; set; }
+        public bool initiallyChecked { get; set; }
+        public bool include { get; set; }
+    }
+
+
 }
