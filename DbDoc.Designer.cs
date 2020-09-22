@@ -44,11 +44,11 @@
             this.slblServer = new System.Windows.Forms.ToolStripStatusLabel();
             this.stxtServer = new System.Windows.Forms.ToolStripStatusLabel();
             this.slblDatabase = new System.Windows.Forms.ToolStripStatusLabel();
+            this.stxtDatabase = new System.Windows.Forms.ToolStripStatusLabel();
             this.slblConnStat = new System.Windows.Forms.ToolStripStatusLabel();
             this.stxtConnStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.slblVersion = new System.Windows.Forms.ToolStripStatusLabel();
             this.stxtVersion = new System.Windows.Forms.ToolStripStatusLabel();
-            this.stxtDatabase = new System.Windows.Forms.ToolStripStatusLabel();
             this.Status.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -149,12 +149,14 @@
             // 
             this.btnSelectObjects.AutoSize = true;
             this.btnSelectObjects.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
+            this.btnSelectObjects.Enabled = false;
             this.btnSelectObjects.Location = new System.Drawing.Point(178, 250);
             this.btnSelectObjects.Name = "btnSelectObjects";
             this.btnSelectObjects.Size = new System.Drawing.Size(117, 31);
             this.btnSelectObjects.TabIndex = 10;
             this.btnSelectObjects.Text = "Select Objects";
             this.btnSelectObjects.UseVisualStyleBackColor = false;
+            this.btnSelectObjects.Click += new System.EventHandler(this.btnSelectObjects_Click);
             // 
             // btnClose
             // 
@@ -205,6 +207,12 @@
             this.slblDatabase.Size = new System.Drawing.Size(69, 17);
             this.slblDatabase.Text = "Database:";
             // 
+            // stxtDatabase
+            // 
+            this.stxtDatabase.Name = "stxtDatabase";
+            this.stxtDatabase.Size = new System.Drawing.Size(70, 17);
+            this.stxtDatabase.Text = "(database)";
+            // 
             // slblConnStat
             // 
             this.slblConnStat.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold);
@@ -222,7 +230,7 @@
             // 
             this.slblVersion.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold);
             this.slblVersion.Name = "slblVersion";
-            this.slblVersion.Size = new System.Drawing.Size(41, 17);
+            this.slblVersion.Size = new System.Drawing.Size(72, 17);
             this.slblVersion.Spring = true;
             this.slblVersion.Text = "Version:";
             this.slblVersion.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -232,12 +240,6 @@
             this.stxtVersion.Name = "stxtVersion";
             this.stxtVersion.Size = new System.Drawing.Size(58, 17);
             this.stxtVersion.Text = "(version)";
-            // 
-            // stxtDatabase
-            // 
-            this.stxtDatabase.Name = "stxtDatabase";
-            this.stxtDatabase.Size = new System.Drawing.Size(70, 17);
-            this.stxtDatabase.Text = "(database)";
             // 
             // DbDoc
             // 
@@ -258,9 +260,10 @@
             this.Controls.Add(this.lblTitle);
             this.Controls.Add(this.lblServer);
             this.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "DbDoc";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Database Documenter";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DbDoc_FormClosing);
             this.Status.ResumeLayout(false);

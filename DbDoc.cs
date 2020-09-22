@@ -15,10 +15,12 @@ namespace DbDocjc
     public partial class DbDoc : Form
     {
         public static MySqlConnection conn { get; private set; }
-        private const string MsgTitle = "DbDocjc";
+        public const string MsgTitle = "DbDocjc";
         public DbDoc()
         {
             InitializeComponent();
+            Left = (int)(0.1 * Screen.PrimaryScreen.Bounds.Right);
+            Top = (int)(0.1 * Screen.PrimaryScreen.Bounds.Bottom);
             txtServer.Text = Properties.Settings.Default.Server;
             txtUser.Text = Properties.Settings.Default.User;
             txtPassword.Text = Properties.Settings.Default.Password;
@@ -139,15 +141,48 @@ namespace DbDocjc
 #pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
                         cmd.ExecuteNonQuery();
                     }
+                    btnSelectObjects.Enabled = true;
+                    slblDatabase.Visible = true;
+                    stxtDatabase.Visible = true;
                 }
                 catch (MySqlException ex)
                 {
                     MessageBox.Show("Error setting database\r\n" + ex.Message, MsgTitle);
                 }
+                finally
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+                }
 
-                slblDatabase.Visible = true;
-                stxtDatabase.Visible = true;
+            }
+        }
+
+        private void btnSelectObjects_Click(object sender, EventArgs e)
+        {
+            using (SelectObjects selectObjects = new SelectObjects(lstDatabases.Text))
+            {
+                selectObjects.ShowDialog(this);
             }
         }
     }
 }
+
+// Template database query function
+//private void GetTables()
+//{
+//    try
+//    {
+//        DbDoc.conn.Open();
+//    }
+//    catch (MySqlException ex)
+//    {
+//        MessageBox.Show("Error setting database\r\n" + ex.Message, DbDoc.MsgTitle);
+//    }
+//    finally
+//    {
+//        if (DbDoc.conn.State == ConnectionState.Open)
+//            DbDoc.conn.Close();
+//    }
+
+//}
