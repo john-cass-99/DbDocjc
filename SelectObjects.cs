@@ -108,6 +108,19 @@ namespace DbDocjc
         {
 
         }
+
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void btnAddDescription_Click(object sender, EventArgs e)
+        {
+            using ( DbDescription dbDescription = new DbDescription(Database))
+            {
+                dbDescription.ShowDialog();
+            }
+        }
     }
 
     public class Info

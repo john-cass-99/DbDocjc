@@ -47,6 +47,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DbDescription.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DbDescription.Designer.cs">
+      <DependentUpon>DbDescription.cs</DependentUpon>
+    </Compile>
     <Compile Include="DbDoc.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -61,6 +67,9 @@
     <Compile Include="SelectObjects.Designer.cs">
       <DependentUpon>SelectObjects.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="DbDescription.resx">
+      <DependentUpon>DbDescription.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DbDoc.resx">
       <DependentUpon>DbDoc.cs</DependentUpon>
     </EmbeddedResource>
