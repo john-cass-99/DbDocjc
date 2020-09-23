@@ -53,6 +53,7 @@
             this.txtDescription.Name = "txtDescription";
             this.txtDescription.Size = new System.Drawing.Size(670, 194);
             this.txtDescription.TabIndex = 1;
+            this.txtDescription.TextChanged += new System.EventHandler(this.txtDescription_TextChanged);
             // 
             // btnClose
             // 
