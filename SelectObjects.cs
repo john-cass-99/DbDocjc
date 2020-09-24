@@ -116,6 +116,8 @@ namespace DbDocjc
 
         private void btnGenerate_Click(object sender, EventArgs e)
         {
+            if (!CheckDescription())
+                return;
             string opFilename = Path.Combine(txtOutputPath.Text, Database + "_documentation.html");
             string cssFilename = Path.Combine(txtOutputPath.Text, "DbDoc.css");
             // While writing project always replace the css file
@@ -162,13 +164,17 @@ namespace DbDocjc
             Close();
         }
 
-        private void btnAddDescription_Click(object sender, EventArgs e)
+        private bool CheckDescription()
         {
             using ( DbDescription dbDescription = new DbDescription(Database))
             {
                 if (dbDescription.ShowDialog() == DialogResult.OK)
-                    htmlData["description"]= dbDescription.description;
+                {
+                    htmlData["description"] = dbDescription.description;
+                    return true;
+                }
             }
+            return false;
         }
     }
 

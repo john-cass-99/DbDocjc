@@ -45,7 +45,6 @@ namespace DbDocjc
                 txtDescription.Text = elDesc.FirstNode.ToString();
             txtDescription.Select(0, 0);
             chg = false;
-            btnSave.Enabled = false;
         }
 
         private XElement getDescription()
@@ -116,7 +115,7 @@ namespace DbDocjc
                 if (MessageBox.Show("Quit and lose changes?", DbDoc.MsgTitle, MessageBoxButtons.YesNo) == DialogResult.No)
                     return;
             }
-            DialogResult = DialogResult.OK;
+            DialogResult = DialogResult.Cancel;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -127,12 +126,12 @@ namespace DbDocjc
             elDesc.ReplaceWith(new XElement ("Description", new XAttribute("name", database), txtDescription.Text));
             xdoc.Save(xmlFilePath);
             chg = false;
+            DialogResult = DialogResult.OK;
         }
 
         private void txtDescription_TextChanged(object sender, EventArgs e)
         {
             chg = true;
-            btnSave.Enabled = txtDescription.Text.Length > 0;
         }
     }
 }

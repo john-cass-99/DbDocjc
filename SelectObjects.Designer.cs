@@ -38,7 +38,6 @@
             this.btnSelectAll = new System.Windows.Forms.Button();
             this.lstInfo = new System.Windows.Forms.CheckedListBox();
             this.btnGenerate = new System.Windows.Forms.Button();
-            this.btnAddDescription = new System.Windows.Forms.Button();
             this.btnClose = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
@@ -131,25 +130,14 @@
             // btnGenerate
             // 
             this.btnGenerate.AutoSize = true;
+            this.btnGenerate.BackColor = System.Drawing.Color.Lime;
             this.btnGenerate.Location = new System.Drawing.Point(261, 525);
             this.btnGenerate.Name = "btnGenerate";
             this.btnGenerate.Size = new System.Drawing.Size(239, 31);
             this.btnGenerate.TabIndex = 10;
             this.btnGenerate.Text = "Generate HTML Documentation";
-            this.btnGenerate.UseVisualStyleBackColor = true;
+            this.btnGenerate.UseVisualStyleBackColor = false;
             this.btnGenerate.Click += new System.EventHandler(this.btnGenerate_Click);
-            // 
-            // btnAddDescription
-            // 
-            this.btnAddDescription.AutoSize = true;
-            this.btnAddDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-            this.btnAddDescription.Location = new System.Drawing.Point(561, 1);
-            this.btnAddDescription.Name = "btnAddDescription";
-            this.btnAddDescription.Size = new System.Drawing.Size(199, 31);
-            this.btnAddDescription.TabIndex = 0;
-            this.btnAddDescription.Text = "Add Database Description";
-            this.btnAddDescription.UseVisualStyleBackColor = false;
-            this.btnAddDescription.Click += new System.EventHandler(this.btnAddDescription_Click);
             // 
             // btnClose
             // 
@@ -169,7 +157,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(761, 577);
             this.Controls.Add(this.btnClose);
-            this.Controls.Add(this.btnAddDescription);
             this.Controls.Add(this.btnGenerate);
             this.Controls.Add(this.lstInfo);
             this.Controls.Add(this.btnSelectAll);
@@ -202,7 +189,6 @@
         private System.Windows.Forms.Button btnSelectAll;
         private System.Windows.Forms.CheckedListBox lstInfo;
         private System.Windows.Forms.Button btnGenerate;
-        private System.Windows.Forms.Button btnAddDescription;
         private System.Windows.Forms.Button btnClose;
     }
 }
