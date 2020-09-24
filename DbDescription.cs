@@ -16,6 +16,14 @@ namespace DbDocjc
 {
     public partial class DbDescription : Form
     {
+        public string description
+        { 
+            get
+            {
+                return txtDescription.Text;
+            }
+        }
+
         private const string xmlFileName = "DbDocjc\\Descriptions.xml";
         private string xmlFilePath { get; set; }
         private readonly string database;

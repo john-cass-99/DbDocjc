@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
@@ -26,7 +29,9 @@ namespace DbDocjc
             {"EVT", new Info {key="EVT",name="Events",initiallyChecked=false } },
         };
 
-    public SelectObjects(string database)
+        private readonly Dictionary<string, string> htmlData = new Dictionary<string, string>();
+
+    public SelectObjects(string database, string server)
         {
             InitializeComponent();
             txtOutputPath.Text = Properties.Settings.Default.OutputPath;
@@ -34,6 +39,11 @@ namespace DbDocjc
             lblTitle.Text += $" '{database}'";
             GetTables();
             SetUpInfoList();
+            htmlData.Add("database", database);
+            htmlData.Add("server", server);
+            htmlData.Add("doc_date", DateTime.Today.ToString("dd MMMM yyyy"));
+            htmlData.Add("description", string.Empty);
+
         }
 
         private void GetTables()
@@ -106,9 +116,47 @@ namespace DbDocjc
 
         private void btnGenerate_Click(object sender, EventArgs e)
         {
+            string opFilename = Path.Combine(txtOutputPath.Text, Database + "_documentation.html");
+            string cssFilename = Path.Combine(txtOutputPath.Text, "DbDoc.css");
+            // While writing project always replace the css file
+            if (File.Exists(cssFilename))
+            {
+                File.Delete(cssFilename);
+            }
+            File.Copy("./DbDoc.css", cssFilename);
 
+            DoPage1(opFilename);
+            Process.Start(opFilename);
         }
 
+        private void DoPage1(string filename)
+        {
+            string[] keys = { "database", "server", "doc_date", "description" };
+
+            string page1;
+            using (StreamReader rdr = new StreamReader("./Page-01.html"))
+            {
+                page1 = rdr.ReadToEnd();
+            }
+
+            foreach (string key in keys)
+            {
+                if (htmlData.TryGetValue(key, out string data))
+                {
+                    string full_key = $"^{key}^";
+                    page1 = page1.Replace(full_key, data);
+                }
+            }
+
+            using ( StreamWriter swr = new StreamWriter(filename))
+            {
+                swr.Write(page1);
+                swr.Flush();
+                swr.Close();
+            }
+
+        }
+        
         private void btnClose_Click(object sender, EventArgs e)
         {
             Close();
@@ -118,7 +166,8 @@ namespace DbDocjc
         {
             using ( DbDescription dbDescription = new DbDescription(Database))
             {
-                dbDescription.ShowDialog();
+                if (dbDescription.ShowDialog() == DialogResult.OK)
+                    htmlData["description"]= dbDescription.description;
             }
         }
     }

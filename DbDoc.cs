@@ -160,7 +160,7 @@ namespace DbDocjc
 
         private void btnSelectObjects_Click(object sender, EventArgs e)
         {
-            using (SelectObjects selectObjects = new SelectObjects(lstDatabases.Text))
+            using (SelectObjects selectObjects = new SelectObjects(lstDatabases.Text, txtServer.Text))
             {
                 selectObjects.ShowDialog(this);
             }
