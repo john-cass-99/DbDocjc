@@ -31,7 +31,7 @@ namespace DbDocjc
 
         private readonly Dictionary<string, string> htmlData = new Dictionary<string, string>();
 
-    public SelectObjects(string database, string server)
+        public SelectObjects(string database, string server)
         {
             InitializeComponent();
             txtOutputPath.Text = Properties.Settings.Default.OutputPath;
@@ -51,10 +51,10 @@ namespace DbDocjc
             try
             {
                 DbDoc.conn.Open();
-                using ( MySqlCommand cmd=DbDoc.conn.CreateCommand())
+                using (MySqlCommand cmd = DbDoc.conn.CreateCommand())
                 {
                     cmd.CommandText = "SHOW FULL TABLES";
-                    using(MySqlDataReader rdr = cmd.ExecuteReader())
+                    using (MySqlDataReader rdr = cmd.ExecuteReader())
                     {
                         lstTables.Items.Clear();
                         while (rdr.Read())
@@ -83,7 +83,7 @@ namespace DbDocjc
 
         private void SetUpInfoList()
         {
-            foreach (KeyValuePair<string,Info> kv in Information )
+            foreach (KeyValuePair<string, Info> kv in Information)
             {
                 Info info = kv.Value;
                 int i = lstInfo.Items.Add(info.name);
@@ -98,7 +98,7 @@ namespace DbDocjc
             const string sDeselect = "Deselect All";
             if (btnSelectAll.Text.Equals(sSelect, StringComparison.Ordinal))
             {
-                for(int i=0; i<lstTables.Items.Count; i++)
+                for (int i = 0; i < lstTables.Items.Count; i++)
                 {
                     lstTables.SetItemChecked(i, true);
                 }
@@ -127,12 +127,20 @@ namespace DbDocjc
             }
             File.Copy("./DbDoc.css", cssFilename);
 
-            DoPage1(opFilename);
-            DoTables(opFilename);
+            using (htmlWriter hw = new htmlWriter(opFilename))
+            {
+                DoPage1(hw);
+                int page = 2;
+                foreach (string table in lstTables.CheckedItems)
+                {
+                    DoTable(hw, table, page++);
+                }
+                hw.Close();
+            }
             Process.Start(opFilename);
         }
 
-        private void DoPage1(string filename)
+        private void DoPage1(StreamWriter hw)
         {
             string[] keys = { "database", "server", "doc_date", "description" };
 
@@ -150,24 +158,67 @@ namespace DbDocjc
                     page1 = page1.Replace(full_key, data);
                 }
             }
-
-            using ( StreamWriter sw = new StreamWriter(filename))
-            {
-                sw.Write(page1);
-                sw.Flush();
-                sw.Close();
-            }
-
+            hw.Write(page1);
         }
 
-        private void DoTables(string filename) 
+        private void DoTable(StreamWriter hw, string table, int page)
         {
-            using (StreamWriter sw = File.AppendText(filename))
+            hw.WriteLine($"\t<h1>Table: {table}</h1>");
+            try
             {
+                DbDoc.conn.Open();
+                using (MySqlCommand cmd = DbDoc.conn.CreateCommand())
+                {
+#pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
+                    cmd.CommandText = $"show full fields from {table}";
+#pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
+                    using (MySqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        // Fields are: Field, Type, Collation, Null, Key, Default, Extra, Privileges, Comment
+                        hw.WriteLine("\t<table class=\"db_table_info\">");
 
+                        hw.Write("\t\t<tr>");
+                        hw.Write("<th>Field</th>");
+                        hw.Write("<th>Type</th>");
+                        hw.Write("<th>Null</th>");
+                        hw.Write("<th>Key</th>");
+                        hw.Write("<th>Default</th>");
+                        hw.Write("<th>Extra</th>");
+                        hw.Write("<th>Comment</th>");
+                        hw.WriteLine("</tr>");
+
+                        while (rdr.Read())
+                        {
+                            hw.Write("\t\t<tr>");
+                            hw.Write($"<td>{rdr.GetString("Field")}</td>");
+                            hw.Write($"<td>{rdr.GetString("Type")}</td>");
+                            hw.Write($"<td>{rdr.GetString("Null")}</td>");
+                            hw.Write($"<td>{rdr.GetString("Key")}</td>");
+                            string dbDefault = rdr.IsDBNull(5) ? string.Empty : rdr.GetString("Default");
+                            hw.Write($"<td>{dbDefault}</td>");
+                            hw.Write($"<td>{rdr.GetString("Extra")}</td>");
+                            hw.Write($"<td>{rdr.GetString("Comment")}</td>");
+                            hw.WriteLine("</tr>");
+                        }
+
+                        hw.WriteLine("\t</table>");
+                        hw.WriteLine($"<div class=\"footer\">- Page {page} -</div>");
+                    }
+
+                }
             }
+            catch (MySqlException ex)
+            {
+                MessageBox.Show($"Error reading table definition for {table}\r\n{ex.Message}", DbDoc.MsgTitle);
+            }
+            finally
+            {
+                if (DbDoc.conn.State == ConnectionState.Open)
+                    DbDoc.conn.Close();
+            }
+            // ToDo: page footer
         }
-        
+
         private void btnClose_Click(object sender, EventArgs e)
         {
             Close();
@@ -175,7 +226,7 @@ namespace DbDocjc
 
         private bool CheckDescription()
         {
-            using ( DbDescription dbDescription = new DbDescription(Database))
+            using (DbDescription dbDescription = new DbDescription(Database))
             {
                 if (dbDescription.ShowDialog() == DialogResult.OK)
                 {
@@ -193,7 +244,7 @@ namespace DbDocjc
         {
             include = false;
         }
-        
+
         public string key { get; set; }
         public string name { get; set; }
         public bool initiallyChecked { get; set; }

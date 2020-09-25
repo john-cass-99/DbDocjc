@@ -52,3 +52,14 @@ div.footer {
         page-break-after: always;
     }
 }
+
+table.db_table_info {
+    border-collapse: collapse;
+    margin: 100px auto 0px auto;
+    text-align: left;
+}
+
+table.db_table_info th, table.db_table_info td {
+    border: 1px solid black;
+    padding: 5px 5px;
+}
