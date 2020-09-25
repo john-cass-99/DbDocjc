@@ -128,6 +128,7 @@ namespace DbDocjc
             File.Copy("./DbDoc.css", cssFilename);
 
             DoPage1(opFilename);
+            DoTables(opFilename);
             Process.Start(opFilename);
         }
 
@@ -150,13 +151,21 @@ namespace DbDocjc
                 }
             }
 
-            using ( StreamWriter swr = new StreamWriter(filename))
+            using ( StreamWriter sw = new StreamWriter(filename))
             {
-                swr.Write(page1);
-                swr.Flush();
-                swr.Close();
+                sw.Write(page1);
+                sw.Flush();
+                sw.Close();
             }
 
+        }
+
+        private void DoTables(string filename) 
+        {
+            using (StreamWriter sw = File.AppendText(filename))
+            {
+
+            }
         }
         
         private void btnClose_Click(object sender, EventArgs e)

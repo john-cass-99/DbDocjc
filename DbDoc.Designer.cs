@@ -49,6 +49,7 @@
             this.stxtConnStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.slblVersion = new System.Windows.Forms.ToolStripStatusLabel();
             this.stxtVersion = new System.Windows.Forms.ToolStripStatusLabel();
+            this.btnTest = new System.Windows.Forms.Button();
             this.Status.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -241,11 +242,25 @@
             this.stxtVersion.Size = new System.Drawing.Size(58, 17);
             this.stxtVersion.Text = "(version)";
             // 
+            // btnTest
+            // 
+            this.btnTest.AutoSize = true;
+            this.btnTest.BackColor = System.Drawing.Color.Red;
+            this.btnTest.Location = new System.Drawing.Point(530, 0);
+            this.btnTest.Name = "btnTest";
+            this.btnTest.Size = new System.Drawing.Size(98, 37);
+            this.btnTest.TabIndex = 13;
+            this.btnTest.Text = "TEST";
+            this.btnTest.UseVisualStyleBackColor = false;
+            this.btnTest.Visible = false;
+            this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
+            // 
             // DbDoc
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 21F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(629, 381);
+            this.Controls.Add(this.btnTest);
             this.Controls.Add(this.Status);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.btnSelectObjects);
@@ -296,6 +311,7 @@
         private System.Windows.Forms.ToolStripStatusLabel slblVersion;
         private System.Windows.Forms.ToolStripStatusLabel stxtVersion;
         private System.Windows.Forms.ToolStripStatusLabel stxtDatabase;
+        private System.Windows.Forms.Button btnTest;
     }
 }
 

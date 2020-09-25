@@ -46,3 +46,9 @@ div.footer {
     font-size: 10pt;
     text-align: center;
 }
+
+@media print {
+    div.footer {
+        page-break-after: always;
+    }
+}

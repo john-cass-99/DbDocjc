@@ -30,6 +30,10 @@ namespace DbDocjc
             slblDatabase.Visible = false;
             stxtDatabase.Visible = false;
             stxtVersion.Text = Application.ProductVersion;
+#if DEBUG
+            btnTest.Visible = true;
+#endif
+
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -164,6 +168,13 @@ namespace DbDocjc
             {
                 selectObjects.ShowDialog(this);
             }
+        }
+
+        private void btnTest_Click(object sender, EventArgs e)
+        {
+            btnConnect_Click(btnTest, new EventArgs());
+            lstDatabases.SelectedIndex = lstDatabases.FindString("tennis");
+            btnSelectObjects_Click(btnTest, new EventArgs());
         }
     }
 }
