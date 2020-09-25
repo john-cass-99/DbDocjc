@@ -202,7 +202,7 @@ namespace DbDocjc
                         }
 
                         hw.WriteLine("\t</table>");
-                        hw.WriteLine($"<div class=\"footer\">- Page {page} -</div>");
+                        //hw.WriteLine($"<footer>- Page {page} -</footer>");
                     }
 
                 }
