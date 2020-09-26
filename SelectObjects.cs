@@ -20,13 +20,12 @@ namespace DbDocjc
 
         private readonly Dictionary<string, Info> Information = new Dictionary<string, Info>()
         {
-            {"COL", new Info {key="COL", name="Columns",initiallyChecked=true, index=0 } },
-            {"IDX", new Info {key="IDX",name="Indexes",initiallyChecked=true, index=1 } },
-            {"FKY", new Info {key="FKY",name="Foreign Keys",initiallyChecked=true, index=2 } },
-            {"SQL", new Info {key="SQL",name="Create SQL",initiallyChecked=false, index=3 } },
-            {"SPF", new Info {key="SPF",name="Stored Procedures and Functions",initiallyChecked=false, index=4 } },
-            {"TRI", new Info {key="TRI",name="Triggers",initiallyChecked=false, index=5 } },
-            {"EVT", new Info {key="EVT",name="Events",initiallyChecked=false, index=6 } },
+            {"IDX", new Info {key="IDX",name="Indexes",Checked=true } },
+            {"FKS", new Info {key="FKS",name="Foreign Keys",Checked=true } },
+            {"SQL", new Info {key="SQL",name="Create SQL",Checked=false } },
+            {"SPF", new Info {key="SPF",name="Stored Procedures and Functions",Checked=false } },
+            {"TRI", new Info {key="TRI",name="Triggers",Checked=false } },
+            {"EVT", new Info {key="EVT",name="Events",Checked=false } },
         };
 
         private readonly Dictionary<string, string> htmlData = new Dictionary<string, string>();
@@ -39,6 +38,7 @@ namespace DbDocjc
             lblTitle.Text += $" '{database}'";
             GetTables();
             SetUpInfoList();
+            lstInfo.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(lstInfo_ItemCheck);
             htmlData.Add("database", database);
             htmlData.Add("server", server);
             htmlData.Add("doc_date", DateTime.Today.ToString("dd MMMM yyyy"));
@@ -86,8 +86,8 @@ namespace DbDocjc
             foreach (KeyValuePair<string, Info> kv in Information)
             {
                 Info info = kv.Value;
-                int i = lstInfo.Items.Add(info.name);
-                if (info.initiallyChecked)
+                int i = lstInfo.Items.Add(info);
+                if (info.Checked)
                     lstInfo.SetItemChecked(i, true);
             }
         }
@@ -129,96 +129,14 @@ namespace DbDocjc
 
             using (htmlWriter hw = new htmlWriter(opFilename))
             {
-                DoPage1(hw);
-                int page = 2;
-                if (lstInfo.GetItemChecked(Information["COL"].index))
+                hw.DoPage1(htmlData);
+                foreach (string table in lstTables.CheckedItems)
                 {
-                    foreach (string table in lstTables.CheckedItems)
-                    {
-                        DoTable(hw, table, page++);
-                    }
+                    hw.DoTable(table, Information);
                 }
                 hw.Close();
             }
             Process.Start(opFilename);
-        }
-
-        private void DoPage1(StreamWriter hw)
-        {
-            string[] keys = { "database", "server", "doc_date", "description" };
-
-            string page1;
-            using (StreamReader rdr = new StreamReader("./Page-01.html"))
-            {
-                page1 = rdr.ReadToEnd();
-            }
-
-            foreach (string key in keys)
-            {
-                if (htmlData.TryGetValue(key, out string data))
-                {
-                    string full_key = $"^{key}^";
-                    page1 = page1.Replace(full_key, data);
-                }
-            }
-            hw.Write(page1);
-        }
-
-        private void DoTable(StreamWriter hw, string table, int page)
-        {
-            hw.WriteLine($"\t<h1>Table: {table}</h1>");
-            try
-            {
-                DbDoc.conn.Open();
-                using (MySqlCommand cmd = DbDoc.conn.CreateCommand())
-                {
-#pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
-                    cmd.CommandText = $"show full fields from {table}";
-#pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
-                    using (MySqlDataReader rdr = cmd.ExecuteReader())
-                    {
-                        // Fields are: Field, Type, Collation, Null, Key, Default, Extra, Privileges, Comment
-                        hw.WriteLine("\t<table class=\"db_table_info\">");
-
-                        hw.Write("\t\t<tr>");
-                        hw.Write("<th>Field</th>");
-                        hw.Write("<th>Type</th>");
-                        hw.Write("<th>Null</th>");
-                        hw.Write("<th>Key</th>");
-                        hw.Write("<th>Default</th>");
-                        hw.Write("<th>Extra</th>");
-                        hw.Write("<th>Comment</th>");
-                        hw.WriteLine("</tr>");
-
-                        while (rdr.Read())
-                        {
-                            hw.Write("\t\t<tr>");
-                            hw.Write($"<td>{rdr.GetString("Field")}</td>");
-                            hw.Write($"<td>{rdr.GetString("Type")}</td>");
-                            hw.Write($"<td>{rdr.GetString("Null")}</td>");
-                            hw.Write($"<td>{rdr.GetString("Key")}</td>");
-                            string dbDefault = rdr.IsDBNull(5) ? string.Empty : rdr.GetString("Default");
-                            hw.Write($"<td>{dbDefault}</td>");
-                            hw.Write($"<td>{rdr.GetString("Extra")}</td>");
-                            hw.Write($"<td>{rdr.GetString("Comment")}</td>");
-                            hw.WriteLine("</tr>");
-                        }
-
-                        hw.WriteLine("\t</table>");
-                    }
-
-                }
-            }
-            catch (MySqlException ex)
-            {
-                MessageBox.Show($"Error reading table definition for {table}\r\n{ex.Message}", DbDoc.MsgTitle);
-            }
-            finally
-            {
-                if (DbDoc.conn.State == ConnectionState.Open)
-                    DbDoc.conn.Close();
-            }
-            // ToDo: page footer
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -238,14 +156,25 @@ namespace DbDocjc
             }
             return false;
         }
+
+        private void lstInfo_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            Info inf = (Info)lstInfo.Items[e.Index];
+            inf.Checked = e.NewValue == CheckState.Checked;
+            Information[inf.key] = inf;
+        }
     }
 
     public class Info
     {
         public string key { get; set; }
         public string name { get; set; }
-        public bool initiallyChecked { get; set; }
-        public int index { get; set; } // index in lstInfo
+        public bool Checked { get; set; }
+
+        public override string ToString()
+        {
+            return name;
+        }
     }
 
 

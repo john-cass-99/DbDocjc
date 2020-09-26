@@ -20,8 +20,14 @@
 @media print {
     h1 {
         break-before: page;
+        margin-bottom: 50px;
     }
 }
+
+    h2 {
+        margin: 30px auto 20px auto;
+        break-after: avoid;
+    }
 
     div.head {
         width: 50%;
@@ -53,6 +59,7 @@
         border-collapse: collapse;
         margin: 100px auto 20px auto;
         text-align: left;
+        break-inside: avoid;
     }
 
 @media screen {
@@ -63,7 +70,7 @@
 
 @media print {
     table.db_table_info {
-        margin: 100px auto 20px auto;
+        margin: 30px auto 20px auto;
     }
 }
 
@@ -71,4 +78,12 @@
         border: 1px solid black;
         padding: 5px 5px;
     }
+
+div.create {
+    border: 1px solid black;
+    width: 75%;
+    text-align: left;
+    margin: 0 auto;
+    padding: 5px 5px;
+}
 
