@@ -20,13 +20,13 @@ namespace DbDocjc
 
         private readonly Dictionary<string, Info> Information = new Dictionary<string, Info>()
         {
-            {"COL", new Info {key="COL", name="Columns",initiallyChecked=true } },
-            {"IDX", new Info {key="IDX",name="Indexes",initiallyChecked=true } },
-            {"FKY", new Info {key="FKY",name="Foreign Keys",initiallyChecked=true } },
-            {"SQL", new Info {key="SQL",name="Create SQL",initiallyChecked=false } },
-            {"SPF", new Info {key="SPF",name="Stored Procedures and Functions",initiallyChecked=false } },
-            {"TRI", new Info {key="TRI",name="Triggers",initiallyChecked=false } },
-            {"EVT", new Info {key="EVT",name="Events",initiallyChecked=false } },
+            {"COL", new Info {key="COL", name="Columns",initiallyChecked=true, index=0 } },
+            {"IDX", new Info {key="IDX",name="Indexes",initiallyChecked=true, index=1 } },
+            {"FKY", new Info {key="FKY",name="Foreign Keys",initiallyChecked=true, index=2 } },
+            {"SQL", new Info {key="SQL",name="Create SQL",initiallyChecked=false, index=3 } },
+            {"SPF", new Info {key="SPF",name="Stored Procedures and Functions",initiallyChecked=false, index=4 } },
+            {"TRI", new Info {key="TRI",name="Triggers",initiallyChecked=false, index=5 } },
+            {"EVT", new Info {key="EVT",name="Events",initiallyChecked=false, index=6 } },
         };
 
         private readonly Dictionary<string, string> htmlData = new Dictionary<string, string>();
@@ -131,9 +131,12 @@ namespace DbDocjc
             {
                 DoPage1(hw);
                 int page = 2;
-                foreach (string table in lstTables.CheckedItems)
+                if (lstInfo.GetItemChecked(Information["COL"].index))
                 {
-                    DoTable(hw, table, page++);
+                    foreach (string table in lstTables.CheckedItems)
+                    {
+                        DoTable(hw, table, page++);
+                    }
                 }
                 hw.Close();
             }
@@ -202,7 +205,6 @@ namespace DbDocjc
                         }
 
                         hw.WriteLine("\t</table>");
-                        //hw.WriteLine($"<footer>- Page {page} -</footer>");
                     }
 
                 }
@@ -240,15 +242,10 @@ namespace DbDocjc
 
     public class Info
     {
-        public Info()
-        {
-            include = false;
-        }
-
         public string key { get; set; }
         public string name { get; set; }
         public bool initiallyChecked { get; set; }
-        public bool include { get; set; }
+        public int index { get; set; } // index in lstInfo
     }
 
 
