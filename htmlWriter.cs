@@ -92,43 +92,44 @@ namespace DbDocjc
                     // INDEXES
                     if (Information["IDX"].Checked)
                     {
-                        WriteLine("\t<h2>Indexes</h2>");
                         cmd.CommandText = $"show indexes from {table}";
-
                         using (MySqlDataReader rdr = cmd.ExecuteReader())
                         {
                             // Fields are:  Table, Non_unique, Key_name, Seq_in_index, Column_name, Collation, Cardinality, Sub_part, Packed, Null, Index_type, Comment, Index_comment
 
-                            WriteLine("\t<table class=\"db_table_info\">");
-
-                            Write("\t\t<tr>");
-                            Write("<th>Column Name</th>");
-                            Write("<th>Index Name</th>");
-                            Write("<th>Is Unique</th>");
-                            Write("<th>Index Type</th>");
-                            Write("<th>Accepts Null</th>");
-                            WriteLine("</tr>");
-
-                            while (rdr.Read())
+                            if (rdr.HasRows)
                             {
-                                Write("\t\t<tr>");
-                                Write($"<td>{rdr.GetString("Column_name")}</td>");
-                                Write($"<td>{rdr.GetString("Key_name")}</td>");
-                                string unique = rdr.GetInt32("Non_unique") == 0 ? "No" : "Yes";
-                                Write($"<td>{unique}</td>");
-                                Write($"<td>{rdr.GetString("Index_type")}</td>");
-                                Write($"<td>{rdr.GetString("Null")}</td>");
-                                WriteLine("</tr>");
-                            }
+                                Write("<div class=\"keep_together\">\r\n\t<h2>Indexes</h2>\r\n");
 
-                            WriteLine("\t</table>");
+                                WriteLine("\t<table class=\"db_table_info\">");
+
+                                Write("\t\t<tr>");
+                                Write("<th>Column Name</th>");
+                                Write("<th>Index Name</th>");
+                                Write("<th>Is Unique</th>");
+                                Write("<th>Index Type</th>");
+                                Write("<th>Accepts Null</th>");
+                                WriteLine("</tr>");
+
+                                while (rdr.Read())
+                                {
+                                    Write("\t\t<tr>");
+                                    Write($"<td>{rdr.GetString("Column_name")}</td>");
+                                    Write($"<td>{rdr.GetString("Key_name")}</td>");
+                                    string unique = rdr.GetInt32("Non_unique") == 0 ? "No" : "Yes";
+                                    Write($"<td>{unique}</td>");
+                                    Write($"<td>{rdr.GetString("Index_type")}</td>");
+                                    Write($"<td>{rdr.GetString("Null")}</td>");
+                                    WriteLine("</tr>");
+                                }
+                                Write("\t</table>\r\n</div>\r\n");
+                            }
                         }
                     }
 
                     // FOREIGN KEYS
                     if (Information["FKS"].Checked)
                     {
-                        WriteLine("\t<h2>Foreign Keys</h2>");
                         cmd.CommandText = "SELECT `column_name`, `referenced_table_schema` AS foreign_db," +
                             "`referenced_table_name` AS foreign_table, `referenced_column_name`  AS foreign_column" +
                             " FROM `information_schema`.`KEY_COLUMN_USAGE` WHERE `constraint_schema` = SCHEMA()" +
@@ -138,33 +139,36 @@ namespace DbDocjc
                         {
                             // Fields are:  column_name, foreign_db, foreign_table, foreign_column
 
-                            WriteLine("\t<table class=\"db_table_info\">");
-
-                            Write("\t\t<tr>");
-                            Write("<th>Column Name</th>");
-                            Write("<th>Foreign DB</th>");
-                            Write("<th>Foreign Table</th>");
-                            Write("<th>Foreign Column</th>");
-                            WriteLine("</tr>");
-
-                            while (rdr.Read())
+                            if (rdr.HasRows)
                             {
-                                Write("\t\t<tr>");
-                                Write($"<td>{rdr.GetString("column_name")}</td>");
-                                Write($"<td>{rdr.GetString("foreign_db")}</td>");
-                                Write($"<td>{rdr.GetString("foreign_table")}</td>");
-                                Write($"<td>{rdr.GetString("foreign_column")}</td>");
-                                WriteLine("</tr>");
-                            }
+                                Write("<div class=\"keep_together\">\r\n\t<h2>Foreign Keys</h2>\r\n");
+                                WriteLine("\t<table class=\"db_table_info\">");
 
-                            WriteLine("\t</table>");
+                                Write("\t\t<tr>");
+                                Write("<th>Column Name</th>");
+                                Write("<th>Foreign DB</th>");
+                                Write("<th>Foreign Table</th>");
+                                Write("<th>Foreign Column</th>");
+                                WriteLine("</tr>");
+
+                                while (rdr.Read())
+                                {
+                                    Write("\t\t<tr>");
+                                    Write($"<td>{rdr.GetString("column_name")}</td>");
+                                    Write($"<td>{rdr.GetString("foreign_db")}</td>");
+                                    Write($"<td>{rdr.GetString("foreign_table")}</td>");
+                                    Write($"<td>{rdr.GetString("foreign_column")}</td>");
+                                    WriteLine("</tr>");
+                                }
+                                Write("\t</table>\r\n</div>\r\n");
+                            }
                         }
                     }
 
                     // CREATE SQL
                     if (Information["SQL"].Checked)
                     {
-                        WriteLine("\t<h2>Create SQL</h2>");
+                        Write("<div class=\"keep_together\">\r\n\t<h2>Create SQL</h2>\r\n");
                         cmd.CommandText = $"SHOW CREATE TABLE {table}";
 
                         using (MySqlDataReader rdr = cmd.ExecuteReader())
@@ -176,8 +180,9 @@ namespace DbDocjc
                             {
                                 Write(rdr.GetString(1).Replace(",", ",<br />"));
                             }
-                            WriteLine("\t</div>");
+                            WriteLine("\r\n\t</div>");
                         }
+                        WriteLine("</div>");
                     }
                 }
             }

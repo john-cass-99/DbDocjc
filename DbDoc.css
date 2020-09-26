@@ -72,6 +72,10 @@
     table.db_table_info {
         margin: 30px auto 20px auto;
     }
+
+    div.keep_together {
+        break-inside: avoid;
+    }
 }
 
     table.db_table_info th, table.db_table_info td {
