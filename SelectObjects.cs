@@ -59,12 +59,8 @@ namespace DbDocjc
                         lstTables.Items.Clear();
                         while (rdr.Read())
                         {
-                            string item = rdr.GetString(0);
-                            if (rdr.GetString(1).Equals("VIEW", StringComparison.OrdinalIgnoreCase))
-                            {
-                                item += " (View)";
-                            }
-                            lstTables.Items.Add(item);
+                            lstTables.Items.Add(new tableInfo(rdr.GetString(0), 
+                                rdr.GetString(1).Equals("VIEW", StringComparison.OrdinalIgnoreCase)));
                         }
                     }
                 }
@@ -127,13 +123,15 @@ namespace DbDocjc
             }
             File.Copy("./DbDoc.css", cssFilename);
 
-            using (htmlWriter hw = new htmlWriter(opFilename))
+            using (htmlWriter hw = new htmlWriter(opFilename, Database))
             {
                 hw.DoPage1(htmlData);
-                foreach (string table in lstTables.CheckedItems)
+                foreach (tableInfo table in lstTables.CheckedItems)
                 {
                     hw.DoTable(table, Information);
                 }
+                if (Information["SPF"].Checked)
+                    hw.DoProcs();
                 hw.Close();
             }
             Process.Start(opFilename);
@@ -177,5 +175,20 @@ namespace DbDocjc
         }
     }
 
+    public class tableInfo
+    {
+        public string name { get; private set; }
+        public bool IsView { get; private set; }
 
+        public tableInfo(string pName, bool pIsView)
+        {
+            name = pName;
+            IsView = pIsView;
+        }
+
+        public override string ToString()
+        {
+            return name;
+        }
+    }
 }

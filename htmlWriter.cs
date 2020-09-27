@@ -13,10 +13,12 @@ namespace DbDocjc
 {
     public class htmlWriter : StreamWriter
     {
-        public htmlWriter(string filename)
+        private readonly string database;
+
+        public htmlWriter(string filename, string pDatabase)
             : base(filename)
         {
-
+            database = pDatabase;
         }
 
         public override void Close()
@@ -48,9 +50,10 @@ namespace DbDocjc
 
 
 #pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
-        public void DoTable(string table, Dictionary<string, Info> Information)
+        public void DoTable(tableInfo table, Dictionary<string, Info> Information)
         {
-            WriteLine($"\t<h1>Table: {table}</h1>");
+            string tableLabel = table.IsView ? "View" : "Table";
+            WriteLine($"\t<h1>{tableLabel}: {table}</h1>");
             try
             {
                 DbDoc.conn.Open();
@@ -184,6 +187,7 @@ namespace DbDocjc
                         }
                         WriteLine("</div>");
                     }
+
                 }
             }
             catch (MySqlException ex)
@@ -197,8 +201,58 @@ namespace DbDocjc
             }
 
         }
+
+        public void DoProcs()
+        {
+
+            // PROCEDURES & FUNCTIONS
+                try
+                {
+                    DbDoc.conn.Open();
+                    using (MySqlCommand cmd = DbDoc.conn.CreateCommand())
+                    {
+                        cmd.CommandText = $"SELECT ROUTINE_NAME, ROUTINE_TYPE, ROUTINE_COMMENT FROM information_schema.ROUTINES WHERE ROUTINE_SCHEMA = '{database}';";
+
+                        using (MySqlDataReader rdr = cmd.ExecuteReader())
+                        {
+                            if (rdr.HasRows)
+                            {
+                                Write("<div class=\"keep_together\">\r\n\t<h1>Stored Procedures and Functions</h1>\r\n");
+                                WriteLine("\t<table class=\"db_table_info\">");
+
+                                Write("\t\t<tr>");
+                                Write("<th>Procedure Name</th>");
+                                Write("<th>Type</th>");
+                                Write("<th>Comment</th>");
+                                WriteLine("</tr>");
+
+                                while (rdr.Read())
+                                {
+                                    Write("\t\t<tr>");
+                                    Write($"<td>{rdr.GetString("ROUTINE_NAME")}</td>");
+                                    Write($"<td>{rdr.GetString("ROUTINE_TYPE")}</td>");
+                                    Write($"<td>{rdr.GetString("ROUTINE_COMMENT")}</td>");
+                                    WriteLine("</tr>");
+                                }
+                                Write("\t</table>\r\n</div>\r\n");
+
+                                WriteLine("\r\n\t</div>");
+                            }
+                            WriteLine("</div>");
+                        }
+                    }
+                }
+                catch (MySqlException ex)
+                {
+                    MessageBox.Show($"Error reading procedure list for {database}\r\n{ex.Message}", DbDoc.MsgTitle);
+                }
+                finally
+                {
+                    if (DbDoc.conn.State == ConnectionState.Open)
+                        DbDoc.conn.Close();
+                }
+            
 #pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
-
-
+       }
     }
 }
