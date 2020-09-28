@@ -88,15 +88,11 @@ namespace DbDocjc
         {
             MySqlConnection tempDB_Conn = null;
 
-            stxtServer.Text = Properties.Settings.Default.Server;
-            // stxtDatabase.Text = Properties.Settings.Default.Database;
-
             using (MySqlConnection localDB_Conn = new MySqlConnection
             {
-                ConnectionString = "Server=" + Properties.Settings.Default.Server
-                + ";user=" + Properties.Settings.Default.User
-                + ";password=" + Properties.Settings.Default.Password
-                /*                + ";database=" + Properties.Settings.Default.Database */
+                ConnectionString = "Server=" + txtServer.Text
+                + ";user=" + txtUser.Text
+                + ";password=" + txtPassword.Text
                 + ";SslMode=none;Allow Batch=true;Allow User Variables=true"
             })
             {
@@ -105,6 +101,7 @@ namespace DbDocjc
                     localDB_Conn.Open();
                     localDB_Conn.Close();
                     tempDB_Conn = localDB_Conn;
+                    stxtServer.Text = txtServer.Text;
                     stxtConnStatus.Text = "OK";
                 }
                 catch (MySqlException Ex)
@@ -114,7 +111,7 @@ namespace DbDocjc
                     stxtConnStatus.Text = "Failed";
                     if (Ex.Message.Contains("Unable to connect"))
                     {
-                        MessageBox.Show("Cannot connect to \"" + Properties.Settings.Default.Server + "\"" + ChkSettings, MsgTitle, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                        MessageBox.Show("Cannot connect to \"" + txtServer.Text + "\"" + ChkSettings, MsgTitle, MessageBoxButtons.OK, MessageBoxIcon.Stop);
                     }
                     else if (Ex.Message.StartsWith("Authentication", StringComparison.Ordinal))
                     {
