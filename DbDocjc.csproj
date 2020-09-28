@@ -61,6 +61,7 @@
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="htmlWriter.cs" />
+    <Compile Include="mysql_db.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SelectObjects.cs">
