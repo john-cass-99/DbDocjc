@@ -161,6 +161,22 @@ namespace DbDocjc
             inf.Checked = e.NewValue == CheckState.Checked;
             Information[inf.key] = inf;
         }
+
+        private void btnBrowse_Click(object sender, EventArgs e)
+        {
+            using ( FolderBrowserDialog fbd = new FolderBrowserDialog())
+            {
+                fbd.SelectedPath = txtOutputPath.Text;
+                fbd.Description = "Select folder for html output";
+                if (fbd.ShowDialog()== DialogResult.OK)
+                {
+                    txtOutputPath.Text = fbd.SelectedPath;
+                    Properties.Settings.Default.OutputPath = txtOutputPath.Text;
+                    Properties.Settings.Default.Save();
+                }
+
+            }
+        }
     }
 
     public class Info
