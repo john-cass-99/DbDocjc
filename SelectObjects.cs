@@ -25,7 +25,7 @@ namespace DbDocjc
             {"SQL", new Info {key="SQL",name="Create SQL",Checked=false } },
             {"SPF", new Info {key="SPF",name="Stored Procedures and Functions",Checked=false } },
             {"TRI", new Info {key="TRI",name="Triggers",Checked=false } },
-            {"EVT", new Info {key="EVT",name="Events",Checked=false } },
+            /*{"EVT", new Info {key="EVT",name="Events",Checked=false } },*/
         };
 
         private readonly Dictionary<string, string> htmlData = new Dictionary<string, string>();

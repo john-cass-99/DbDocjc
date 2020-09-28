@@ -18,12 +18,15 @@ Having failed to find one I decided to write one myself and put it on GitHub whe
 * PDF output can be obtained using many different, readily available solutions. I have used the excellent [PDF995](http://www.pdf995.com/) for many years and as well as producing very compact, accurate output it does provide a solution for one intractable problem with html - printed page numbering.
 
 ## Setup
-A click-once installation is planned when the project is complete.
+A click-once installation is planned when the project has reached a sufficiently advanced stage.
 
 ## Project Status
-MySql allows comments for tables (only when created) and individual fields there is no database comment facility. 
-Currently the project will document Tables, Indexes, Foreign Keys, Create SQL and will list Stored Procedures and Functions. It produces html output which can be used as it stands or printed to PDF using (recommended) [PDF995](http://www.pdf995.com/). Triggers and Events are being worked on now.
+MySql supports comments for tables (but only when creating) and individual fields; there is no database comment facility. DbDocjc prompts for a description which appears on the title page and stores this in an XML file for future reference.
+Currently the project will document Tables, Indexes, Foreign Keys, Triggers, Create SQL and will list Stored Procedures and Functions. It produces html output which can be used as it stands or printed to PDF using (recommended) [PDF995](http://www.pdf995.com/). Events are not yet supported.
+
+Current work is on a branch which collects all the database interaction in a single class. This will facilitate supporting other types of database.
 
 ## Possible enhancements
-* Extend to other types of database e.g. SQL Server
+* Extend to other types of database e.g. SQL Server.
 * Provide themes via CSS to give a variety of output styles.
+* Support database events.

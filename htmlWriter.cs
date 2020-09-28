@@ -168,6 +168,46 @@ namespace DbDocjc
                         }
                     }
 
+                    // TRIGGERS
+                    if (Information["TRI"].Checked)
+                    {
+                        cmd.CommandText = "select trigger_name, action_order, action_timing," +
+                            " event_manipulation as trigger_event, action_statement as 'definition' from information_schema.TRIGGERS" +
+                            $" where event_object_schema = '{database}' and event_object_table = '{table}';";
+
+                        using (MySqlDataReader rdr = cmd.ExecuteReader())
+                        {
+                            // Fields are:  trigger_name, action_order, action_timing, trigger_event, definition
+
+                            if (rdr.HasRows)
+                            {
+                                Write("<div class=\"keep_together\">\r\n\t<h2>Triggers</h2>\r\n");
+                                WriteLine("\t<table class=\"db_table_info\">");
+
+                                Write("\t\t<tr>");
+                                Write("<th>Trigger Name</th>");
+                                Write("<th>Action Order</th>");
+                                Write("<th>Action Timing</th>");
+                                Write("<th>Trigger Event</th>");
+                                Write("<th>Definition</th>");
+                                WriteLine("</tr>");
+
+                                while (rdr.Read())
+                                {
+                                    Write("\t\t<tr>");
+                                    Write($"<td>{rdr.GetString("trigger_name")}</td>");
+                                    Write($"<td>{rdr.GetString("action_order")}</td>");
+                                    Write($"<td>{rdr.GetString("action_timing")}</td>");
+                                    Write($"<td>{rdr.GetString("trigger_event")}</td>");
+                                    Write($"<td>{rdr.GetString("definition")}</td>");
+                                    WriteLine("</tr>");
+                                }
+                                Write("\t</table>\r\n</div>\r\n");
+                            }
+                        }
+                    }
+
+
                     // CREATE SQL
                     if (Information["SQL"].Checked)
                     {
