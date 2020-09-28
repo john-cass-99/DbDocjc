@@ -16,7 +16,7 @@ namespace DbDocjc
 {
     public partial class SelectObjects : Form
     {
-        public string Database { get; private set; }
+        private mysql_db db { get; set; }
 
         private readonly Dictionary<string, Info> Information = new Dictionary<string, Info>()
         {
@@ -30,20 +30,19 @@ namespace DbDocjc
 
         private readonly Dictionary<string, string> htmlData = new Dictionary<string, string>();
 
-        public SelectObjects(mysql_db db)
+        public SelectObjects(mysql_db pdb)
         {
             InitializeComponent();
             txtOutputPath.Text = Properties.Settings.Default.OutputPath;
-            Database = db.database;
-            lblTitle.Text += $" '{db.database}'";
-            db.GetTables(lstTables);
+            lblTitle.Text += $" '{pdb.database}'";
+            pdb.GetTables(lstTables);
             SetUpInfoList();
             lstInfo.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(lstInfo_ItemCheck);
-            htmlData.Add("database", db.database);
-            htmlData.Add("server", db.server);
+            htmlData.Add("database", pdb.database);
+            htmlData.Add("server", pdb.server);
             htmlData.Add("doc_date", DateTime.Today.ToString("dd MMMM yyyy"));
             htmlData.Add("description", string.Empty);
-
+            db = pdb;
         }
 
         private void SetUpInfoList()
@@ -83,7 +82,7 @@ namespace DbDocjc
         {
             if (!CheckDescription())
                 return;
-            string opFilename = Path.Combine(txtOutputPath.Text, Database + "_documentation.html");
+            string opFilename = Path.Combine(txtOutputPath.Text, db.database + "_documentation.html");
             string cssFilename = Path.Combine(txtOutputPath.Text, "DbDoc.css");
             // While writing project always replace the css file
             if (File.Exists(cssFilename))
@@ -92,7 +91,7 @@ namespace DbDocjc
             }
             File.Copy("./DbDoc.css", cssFilename);
 
-            using (htmlWriter hw = new htmlWriter(opFilename, Database))
+            using (htmlWriter hw = new htmlWriter(opFilename, db))
             {
                 hw.DoPage1(htmlData);
                 foreach (tableInfo table in lstTables.CheckedItems)
@@ -113,7 +112,7 @@ namespace DbDocjc
 
         private bool CheckDescription()
         {
-            using (DbDescription dbDescription = new DbDescription(Database))
+            using (DbDescription dbDescription = new DbDescription(db.database))
             {
                 if (dbDescription.ShowDialog() == DialogResult.OK)
                 {
