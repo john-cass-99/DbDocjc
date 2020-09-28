@@ -281,6 +281,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Database Documenter";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DbDoc_FormClosing);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.DbDoc_FormClosed);
             this.Status.ResumeLayout(false);
             this.Status.PerformLayout();
             this.ResumeLayout(false);

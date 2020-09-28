@@ -30,50 +30,19 @@ namespace DbDocjc
 
         private readonly Dictionary<string, string> htmlData = new Dictionary<string, string>();
 
-        public SelectObjects(string database, string server)
+        public SelectObjects(mysql_db db)
         {
             InitializeComponent();
             txtOutputPath.Text = Properties.Settings.Default.OutputPath;
-            Database = database;
-            lblTitle.Text += $" '{database}'";
-            GetTables();
+            Database = db.database;
+            lblTitle.Text += $" '{db.database}'";
+            db.GetTables(lstTables);
             SetUpInfoList();
             lstInfo.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(lstInfo_ItemCheck);
-            htmlData.Add("database", database);
-            htmlData.Add("server", server);
+            htmlData.Add("database", db.database);
+            htmlData.Add("server", db.server);
             htmlData.Add("doc_date", DateTime.Today.ToString("dd MMMM yyyy"));
             htmlData.Add("description", string.Empty);
-
-        }
-
-        private void GetTables()
-        {
-            try
-            {
-                DbDoc.conn.Open();
-                using (MySqlCommand cmd = DbDoc.conn.CreateCommand())
-                {
-                    cmd.CommandText = "SHOW FULL TABLES";
-                    using (MySqlDataReader rdr = cmd.ExecuteReader())
-                    {
-                        lstTables.Items.Clear();
-                        while (rdr.Read())
-                        {
-                            lstTables.Items.Add(new tableInfo(rdr.GetString(0), 
-                                rdr.GetString(1).Equals("VIEW", StringComparison.OrdinalIgnoreCase)));
-                        }
-                    }
-                }
-            }
-            catch (MySqlException ex)
-            {
-                MessageBox.Show("Error setting database\r\n" + ex.Message, DbDoc.MsgTitle);
-            }
-            finally
-            {
-                if (DbDoc.conn.State == ConnectionState.Open)
-                    DbDoc.conn.Close();
-            }
 
         }
 

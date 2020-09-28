@@ -14,6 +14,7 @@ namespace DbDocjc
 {
     public partial class DbDoc : Form
     {
+        public mysql_db db = new mysql_db();
         public static MySqlConnection conn { get; private set; }
         public const string MsgTitle = "DbDocjc";
         public DbDoc()
@@ -51,117 +52,47 @@ namespace DbDocjc
 
         private void btnConnect_Click(object sender, EventArgs e)
         {
-            conn = OpenConnection();
-            if (conn != null)
+            db.Connect(txtServer.Text, txtUser.Text, txtPassword.Text);
+            if (db.hasError)
             {
-                try
-                {
-                    conn.Open();
-                    using (MySqlCommand cmd = conn.CreateCommand())
-                    {
-                        cmd.CommandText = "SHOW DATABASES";
-                        using (MySqlDataReader rdr = cmd.ExecuteReader())
-                        {
-                            lstDatabases.Items.Clear();
-                            while (rdr.Read())
-                            {
-                                lstDatabases.Items.Add(rdr.GetString(0));
-                            }
-                        }
-                    }
-                    stxtConnStatus.Text = "OK";
-                }
-                catch (MySqlException ex)
-                {
-                    MessageBox.Show("Error getting database list\r\n" + ex.Message, MsgTitle);
-                }
-                finally
-                {
-                    if (conn.State == ConnectionState.Open)
-                        conn.Close();
-                }
+                MessageBox.Show(db.ErrorMsg, MsgTitle);
+                stxtConnStatus.Text = "Failed";
+                return;
             }
+            stxtServer.Text = txtServer.Text;
+            stxtConnStatus.Text = "OK";
 
+            db.FillDatabaseCombo(lstDatabases);
+            if (db.hasError)
+            {
+                MessageBox.Show(db.ErrorMsg, MsgTitle);
+            }
         }
 
-        private MySqlConnection OpenConnection()
-        {
-            MySqlConnection tempDB_Conn = null;
-
-            using (MySqlConnection localDB_Conn = new MySqlConnection
-            {
-                ConnectionString = "Server=" + txtServer.Text
-                + ";user=" + txtUser.Text
-                + ";password=" + txtPassword.Text
-                + ";SslMode=none;Allow Batch=true;Allow User Variables=true"
-            })
-            {
-                try
-                {
-                    localDB_Conn.Open();
-                    localDB_Conn.Close();
-                    tempDB_Conn = localDB_Conn;
-                    stxtServer.Text = txtServer.Text;
-                    stxtConnStatus.Text = "OK";
-                }
-                catch (MySqlException Ex)
-                {
-                    const string ChkSettings = "\rCheck settings";
-                    tempDB_Conn = null;
-                    stxtConnStatus.Text = "Failed";
-                    if (Ex.Message.Contains("Unable to connect"))
-                    {
-                        MessageBox.Show("Cannot connect to \"" + txtServer.Text + "\"" + ChkSettings, MsgTitle, MessageBoxButtons.OK, MessageBoxIcon.Stop);
-                    }
-                    else if (Ex.Message.StartsWith("Authentication", StringComparison.Ordinal))
-                    {
-                        MessageBox.Show(Ex.Message + ChkSettings, MsgTitle, MessageBoxButtons.OK, MessageBoxIcon.Stop);
-                    }
-                    else
-                    {
-                        MessageBox.Show(Ex.Message, MsgTitle, MessageBoxButtons.OK, MessageBoxIcon.Stop);
-                    }
-
-                }
-            }
-            return tempDB_Conn;
-        }
 
         private void lstDatabases_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (lstDatabases.SelectedIndex > 0)
             {
-                stxtDatabase.Text = lstDatabases.SelectedItem.ToString();
-                try
+                string database = lstDatabases.SelectedItem.ToString();
+                db.SetDatabase(database);
+                if (db.hasError)
                 {
-                    conn.Open();
-                    using ( MySqlCommand cmd = conn.CreateCommand())
-                    {
-#pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
-                        cmd.CommandText = "USE " + stxtDatabase.Text;
-#pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
-                        cmd.ExecuteNonQuery();
-                    }
+                    MessageBox.Show(db.ErrorMsg, MsgTitle);
+                }
+                else
+                {
                     btnSelectObjects.Enabled = true;
                     slblDatabase.Visible = true;
+                    stxtDatabase.Text = database;
                     stxtDatabase.Visible = true;
                 }
-                catch (MySqlException ex)
-                {
-                    MessageBox.Show("Error setting database\r\n" + ex.Message, MsgTitle);
-                }
-                finally
-                {
-                    if (conn.State == ConnectionState.Open)
-                        conn.Close();
-                }
-
             }
         }
 
         private void btnSelectObjects_Click(object sender, EventArgs e)
         {
-            using (SelectObjects selectObjects = new SelectObjects(lstDatabases.Text, txtServer.Text))
+            using (SelectObjects selectObjects = new SelectObjects(db))
             {
                 selectObjects.ShowDialog(this);
             }
@@ -172,6 +103,11 @@ namespace DbDocjc
             btnConnect_Click(btnTest, new EventArgs());
             lstDatabases.SelectedIndex = lstDatabases.FindString("tennis");
             btnSelectObjects_Click(btnTest, new EventArgs());
+        }
+
+        private void DbDoc_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            db.close();
         }
     }
 }
