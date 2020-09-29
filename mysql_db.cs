@@ -231,7 +231,20 @@ namespace DbDocjc
                                     " FROM `information_schema`.`KEY_COLUMN_USAGE` WHERE `constraint_schema` = SCHEMA()" +
                                     $" AND `table_name` = '{table}' AND `referenced_column_name` IS NOT NULL ORDER BY `column_name`";
         }
-
+        public string sqlTriggers(string table)
+        {
+            return $"select trigger_name, action_order, action_timing," +
+                        " event_manipulation as trigger_event, action_statement as 'definition' from information_schema.TRIGGERS" +
+                        $" where event_object_schema = '{database}' and event_object_table = '{table}'";
+        }
+        public static string sqlCreateTable(string table)
+        {
+            return $"SHOW CREATE TABLE {table}";
+        }
+        public string sqlProcs()
+        {
+            return $"SELECT ROUTINE_NAME, ROUTINE_TYPE, ROUTINE_COMMENT FROM information_schema.ROUTINES WHERE ROUTINE_SCHEMA = '{database}'";
+        }
 
     }
 }

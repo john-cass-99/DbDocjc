@@ -48,8 +48,6 @@ namespace DbDocjc
             Write(page1);
         }
 
-
-#pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
         public void DoTable(tableInfo table, Dictionary<string, Info> Information)
         {
             string tableLabel = table.IsView ? "View" : "Table";
@@ -86,7 +84,7 @@ namespace DbDocjc
             else
             {
                 if (db.hasError)
-                    MessageBox.Show($"Error getting table data:\r\n{db.ErrorMsg}");
+                    MessageBox.Show($"Error getting table data:\r\n{db.ErrorMsg}", DbDoc.MsgTitle);
             }
             WriteLine("\t</table>");
 
@@ -124,7 +122,7 @@ namespace DbDocjc
                 else
                 {
                     if (db.hasError)
-                        MessageBox.Show($"Error getting index data:\r\n{db.ErrorMsg}");
+                        MessageBox.Show($"Error getting index data:\r\n{db.ErrorMsg}", DbDoc.MsgTitle);
                 }
             }
 
@@ -159,127 +157,110 @@ namespace DbDocjc
                 else
                 {
                     if (db.hasError)
-                        MessageBox.Show($"Error getting foreign keys:\r\n{db.ErrorMsg}");
+                        MessageBox.Show($"Error getting foreign keys:\r\n{db.ErrorMsg}", DbDoc.MsgTitle);
+                }
+
+            }
+
+
+
+            // TRIGGERS
+            if (Information["TRI"].Checked)
+            {
+                string[] keys_tr = { "trigger_name", "action_order", "action_timing", "trigger_event", "definition" };
+
+                if (db.query(keys_tr, db.sqlTriggers(table.name)))
+                {
+
+                    Write("<div class=\"keep_together\">\r\n\t<h2>Triggers</h2>\r\n");
+                    WriteLine("\t<table class=\"db_table_info\">");
+
+                    Write("\t\t<tr>");
+                    Write("<th>Trigger Name</th>");
+                    Write("<th>Action Order</th>");
+                    Write("<th>Action Timing</th>");
+                    Write("<th>Trigger Event</th>");
+                    Write("<th>Definition</th>");
+                    WriteLine("</tr>");
+
+                    foreach (Dictionary<string, object> row in db)
+                    {
+                        Write("\t\t<tr>");
+                        Write($"<td>{row["trigger_name"]}</td>");
+                        Write($"<td>{row["action_order"]}</td>");
+                        Write($"<td>{row["action_timing"]}</td>");
+                        Write($"<td>{row["trigger_event"]}</td>");
+                        Write($"<td>{row["definition"]}</td>");
+                        WriteLine("</tr>");
+                    }
+                    Write("\t</table>\r\n</div>\r\n");
+                }
+                else
+                {
+                    if (db.hasError)
+                        MessageBox.Show($"Error getting triggers:\r\n{db.ErrorMsg}", DbDoc.MsgTitle);
+                }
+            }
+
+
+            // CREATE SQL
+            if (Information["SQL"].Checked)
+            {
+                string[] keys_csql = { "Table", "Create Table" };
+                if (db.query(keys_csql, mysql_db.sqlCreateTable(table.name)))
+                {
+                    Write("<div class=\"keep_together\">\r\n\t<h2>Create SQL</h2>\r\n");
+                    WriteLine("\t<div class=\"create\">");
+                    foreach (Dictionary<string, object> row in db)
+                    {
+                        Write(row["Create Table"].ToString().Replace(",", ",<br />"));
+                    }
+                    WriteLine("\r\n\t</div>");
+                    WriteLine("</div>");
+                }
+                else
+                {
+                    if (db.hasError)
+                        MessageBox.Show($"Error getting create sql:\r\n{db.ErrorMsg}", DbDoc.MsgTitle);
                 }
 
             }
         }
-
-        /*
-                                    // TRIGGERS
-                                    if (Information["TRI"].Checked)
-                                    {
-                                        cmd.CommandText = "select trigger_name, action_order, action_timing," +
-                                            " event_manipulation as trigger_event, action_statement as 'definition' from information_schema.TRIGGERS" +
-                                            $" where event_object_schema = '{db.database}' and event_object_table = '{table}';";
-
-                                        using (MySqlDataReader rdr = cmd.ExecuteReader())
-                                        {
-                                            // Fields are:  trigger_name, action_order, action_timing, trigger_event, definition
-
-                                            if (rdr.HasRows)
-                                            {
-                                                Write("<div class=\"keep_together\">\r\n\t<h2>Triggers</h2>\r\n");
-                                                WriteLine("\t<table class=\"db_table_info\">");
-
-                                                Write("\t\t<tr>");
-                                                Write("<th>Trigger Name</th>");
-                                                Write("<th>Action Order</th>");
-                                                Write("<th>Action Timing</th>");
-                                                Write("<th>Trigger Event</th>");
-                                                Write("<th>Definition</th>");
-                                                WriteLine("</tr>");
-
-                                                while (rdr.Read())
-                                                {
-                                                    Write("\t\t<tr>");
-                                                    Write($"<td>{rdr.GetString("trigger_name")}</td>");
-                                                    Write($"<td>{rdr.GetString("action_order")}</td>");
-                                                    Write($"<td>{rdr.GetString("action_timing")}</td>");
-                                                    Write($"<td>{rdr.GetString("trigger_event")}</td>");
-                                                    Write($"<td>{rdr.GetString("definition")}</td>");
-                                                    WriteLine("</tr>");
-                                                }
-                                                Write("\t</table>\r\n</div>\r\n");
-                                            }
-                                        }
-                                    }
-
-
-                                    // CREATE SQL
-                                    if (Information["SQL"].Checked)
-                                    {
-                                        Write("<div class=\"keep_together\">\r\n\t<h2>Create SQL</h2>\r\n");
-                                        cmd.CommandText = $"SHOW CREATE TABLE {table}";
-
-                                        using (MySqlDataReader rdr = cmd.ExecuteReader())
-                                        {
-                                            // Fields are:  Table, Create Table
-
-                                            WriteLine("\t<div class=\"create\">");
-                                            if (rdr.Read())
-                                            {
-                                                Write(rdr.GetString(1).Replace(",", ",<br />"));
-                                            }
-                                            WriteLine("\r\n\t</div>");
-                                        }
-                                        WriteLine("</div>");
-                                    }
-
-                                */
-
 
         public void DoProcs()
         {
 
             // PROCEDURES & FUNCTIONS
-            try
+            string[] keys_procs = { "ROUTINE_NAME", "ROUTINE_TYPE", "ROUTINE_COMMENT" };
+            if (db.query(keys_procs, db.sqlProcs()))
             {
-                DbDoc.conn.Open();
-                using (MySqlCommand cmd = DbDoc.conn.CreateCommand())
+                Write("<div class=\"keep_together\">\r\n\t<h1>Stored Procedures and Functions</h1>\r\n");
+                WriteLine("\t<table class=\"db_table_info\">");
+
+                Write("\t\t<tr>");
+                Write("<th>Procedure Name</th>");
+                Write("<th>Type</th>");
+                Write("<th>Comment</th>");
+                WriteLine("</tr>");
+
+                foreach (Dictionary<string, object> row in db)
                 {
-                    cmd.CommandText = $"SELECT ROUTINE_NAME, ROUTINE_TYPE, ROUTINE_COMMENT FROM information_schema.ROUTINES WHERE ROUTINE_SCHEMA = '{db.database}';";
-
-                    using (MySqlDataReader rdr = cmd.ExecuteReader())
-                    {
-                        if (rdr.HasRows)
-                        {
-                            Write("<div class=\"keep_together\">\r\n\t<h1>Stored Procedures and Functions</h1>\r\n");
-                            WriteLine("\t<table class=\"db_table_info\">");
-
-                            Write("\t\t<tr>");
-                            Write("<th>Procedure Name</th>");
-                            Write("<th>Type</th>");
-                            Write("<th>Comment</th>");
-                            WriteLine("</tr>");
-
-                            while (rdr.Read())
-                            {
-                                Write("\t\t<tr>");
-                                Write($"<td>{rdr.GetString("ROUTINE_NAME")}</td>");
-                                Write($"<td>{rdr.GetString("ROUTINE_TYPE")}</td>");
-                                Write($"<td>{rdr.GetString("ROUTINE_COMMENT")}</td>");
-                                WriteLine("</tr>");
-                            }
-                            Write("\t</table>\r\n</div>\r\n");
-
-                            WriteLine("\r\n\t</div>");
-                        }
-                        WriteLine("</div>");
-                    }
+                    Write("\t\t<tr>");
+                    Write($"<td>{row["ROUTINE_NAME"]}</td>");
+                    Write($"<td>{row["ROUTINE_TYPE"]}</td>");
+                    Write($"<td>{row["ROUTINE_COMMENT"]}</td>");
+                    WriteLine("</tr>");
                 }
+                Write("\t</table>\r\n</div>\r\n");
+                WriteLine("\r\n\t</div>");
+                WriteLine("</div>");
             }
-            catch (MySqlException ex)
+            else
             {
-                MessageBox.Show($"Error reading procedure list for {db.database}\r\n{ex.Message}", DbDoc.MsgTitle);
+                if (db.hasError)
+                    MessageBox.Show($"Error reading procedure list for {db.database}\r\n{db.ErrorMsg}", DbDoc.MsgTitle);
             }
-            finally
-            {
-                if (DbDoc.conn.State == ConnectionState.Open)
-                    DbDoc.conn.Close();
-            }
-
-#pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
         }
     }
 }
+
