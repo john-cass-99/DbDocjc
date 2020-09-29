@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using MySql.Data;
 using MySql.Data.MySqlClient;
+using JEncrypt;
 
 namespace DbDocjc
 {
@@ -23,7 +24,7 @@ namespace DbDocjc
             Top = (int)(0.1 * Screen.PrimaryScreen.Bounds.Bottom);
             txtServer.Text = Properties.Settings.Default.Server;
             txtUser.Text = Properties.Settings.Default.User;
-            txtPassword.Text = Properties.Settings.Default.Password;
+            txtPassword.Text = Encryption.Decrypt(Properties.Settings.Default.Password);
 
             stxtServer.Text = txtServer.Text;
             stxtConnStatus.Text = "Not Connected";
@@ -45,7 +46,7 @@ namespace DbDocjc
         {
             Properties.Settings.Default.Server = txtServer.Text;
             Properties.Settings.Default.User = txtUser.Text;
-            Properties.Settings.Default.Password = txtPassword.Text;
+            Properties.Settings.Default.Password = Encryption.Encrypt(txtPassword.Text);
             Properties.Settings.Default.Save();
         }
 
