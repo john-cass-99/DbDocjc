@@ -11,15 +11,9 @@ using MySql.Data.MySqlClient;
 
 namespace DbDocjc
 {
-    public class mysql_db : IEnumerable<Dictionary<string, object>>
+    public class mysql_db : _db
     {
         private MySqlConnection conn { get; set; }
-        public string database { get; private set; }
-        public string server { get; private set; }
-
-        public bool hasError { get; private set; }
-        public string ErrorMsg { get; private set; }
-
         private MySqlCommand _cmd { get; set; }
         private MySqlDataReader _rdr { get; set; }
         private string[] rdr_keys { get; set; }
@@ -40,7 +34,7 @@ namespace DbDocjc
             }
         }
 
-        public void Connect(string srvr, string user, string password)
+        public override void Connect(string srvr, string user, string password)
         {
             hasError = false;
             ErrorMsg = string.Empty;
@@ -76,7 +70,7 @@ namespace DbDocjc
             }
         }
 
-        public void FillDatabaseCombo(ComboBox cmb)
+        public override void FillDatabaseCombo(ComboBox cmb)
         {
             hasError = false;
             ErrorMsg = string.Empty;
@@ -103,7 +97,7 @@ namespace DbDocjc
             }
         }
 
-        public void SetDatabase(string dbname)
+        public override void SetDatabase(string dbname)
         {
             hasError = false;
             ErrorMsg = string.Empty;
@@ -127,7 +121,7 @@ namespace DbDocjc
 
         }
 
-        public void GetTables(CheckedListBox cListbox)
+        public override void GetTables(CheckedListBox cListbox)
         {
             hasError = false;
             ErrorMsg = string.Empty;
@@ -161,7 +155,7 @@ namespace DbDocjc
 /// <param name="keys">Array of keys in the order data will be returned</param>
 /// <param name="sql">Query SQL</param>
 /// <returns>A dictionary (associative array) of results.</returns>
-        public bool query(string[] keys, string sql) 
+        public override bool query(string[] keys, string sql) 
         {
             hasError = false;
             ErrorMsg = string.Empty;
@@ -189,18 +183,7 @@ namespace DbDocjc
             return false;
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            // call the generic version of the method
-            return this.GetEnumerator();
-        }
-
-        IEnumerator<Dictionary<string, object>> IEnumerable<Dictionary<string, object>>.GetEnumerator()
-        {
-            return (IEnumerator< Dictionary<string, object>>)GetEnumerator();
-        }
-
-        public IEnumerator<Dictionary<string,object>> GetEnumerator()
+        public override IEnumerator<Dictionary<string,object>> GetEnumerator()
         {
             while (_rdr.Read())
             {
@@ -216,32 +199,32 @@ namespace DbDocjc
             yield break;
         }
 
-        public static string sqlColumns(string table)
+        public override string sqlColumns(string table)
         {
             return $"show full fields from {table}";
         }
-        public static string sqlIndexes(string table)
+        public override string sqlIndexes(string table)
         {
             return $"show indexes from {table}";
         }
-        public static string sqlForeignKeys(string table)
+        public override string sqlForeignKeys(string table)
         {
             return $"SELECT `column_name`, `referenced_table_schema` AS foreign_db," +
                                     "`referenced_table_name` AS foreign_table, `referenced_column_name`  AS foreign_column" +
                                     " FROM `information_schema`.`KEY_COLUMN_USAGE` WHERE `constraint_schema` = SCHEMA()" +
                                     $" AND `table_name` = '{table}' AND `referenced_column_name` IS NOT NULL ORDER BY `column_name`";
         }
-        public string sqlTriggers(string table)
+        public override string sqlTriggers(string table)
         {
             return $"select trigger_name, action_order, action_timing," +
                         " event_manipulation as trigger_event, action_statement as 'definition' from information_schema.TRIGGERS" +
                         $" where event_object_schema = '{database}' and event_object_table = '{table}'";
         }
-        public static string sqlCreateTable(string table)
+        public override string sqlCreateTable(string table)
         {
             return $"SHOW CREATE TABLE {table}";
         }
-        public string sqlProcs()
+        public override string sqlProcs()
         {
             return $"SELECT ROUTINE_NAME, ROUTINE_TYPE, ROUTINE_COMMENT FROM information_schema.ROUTINES WHERE ROUTINE_SCHEMA = '{database}'";
         }

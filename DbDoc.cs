@@ -7,8 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using MySql.Data;
-using MySql.Data.MySqlClient;
 using JEncrypt;
 
 namespace DbDocjc
@@ -16,7 +14,6 @@ namespace DbDocjc
     public partial class DbDoc : Form
     {
         public mysql_db db = new mysql_db();
-        public static MySqlConnection conn { get; private set; }
         public const string MsgTitle = "DbDocjc";
         public DbDoc()
         {

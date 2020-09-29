@@ -65,7 +65,7 @@ namespace DbDocjc
             WriteLine("</tr>");
 
             string[] keys_t = { "Field", "Type", "Collation", "Null", "Key", "Default", "Extra", "Privileges", "Comment" };
-            if (db.query(keys_t, mysql_db.sqlColumns(table.name)))
+            if (db.query(keys_t, db.sqlColumns(table.name)))
             {
                 foreach (Dictionary<string, object> row in db)
                 {
@@ -92,7 +92,7 @@ namespace DbDocjc
             if (Information["IDX"].Checked)
             {
                 string[] keys_i = { "Table", "Non_unique", "Key_name", "Seq_in_index", "Column_name", "Collation", "Cardinality", "Sub_part", "Packed", "Null", "Index_type", "Comment", "Index_comment" };
-                if (db.query(keys_i, mysql_db.sqlIndexes(table.name)))
+                if (db.query(keys_i, db.sqlIndexes(table.name)))
                 {
                     Write("<div class=\"keep_together\">\r\n\t<h2>Indexes</h2>\r\n");
 
@@ -130,7 +130,7 @@ namespace DbDocjc
             if (Information["FKS"].Checked)
             {
                 string[] keys_f = { "column_name", "foreign_db", "foreign_table", "foreign_column" };
-                if (db.query(keys_f, mysql_db.sqlForeignKeys(table.name)))
+                if (db.query(keys_f, db.sqlForeignKeys(table.name)))
                 {
 
                     Write("<div class=\"keep_together\">\r\n\t<h2>Foreign Keys</h2>\r\n");
@@ -207,7 +207,7 @@ namespace DbDocjc
             if (Information["SQL"].Checked)
             {
                 string[] keys_csql = { "Table", "Create Table" };
-                if (db.query(keys_csql, mysql_db.sqlCreateTable(table.name)))
+                if (db.query(keys_csql, db.sqlCreateTable(table.name)))
                 {
                     Write("<div class=\"keep_together\">\r\n\t<h2>Create SQL</h2>\r\n");
                     WriteLine("\t<div class=\"create\">");
