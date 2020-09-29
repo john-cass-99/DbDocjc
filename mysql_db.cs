@@ -174,6 +174,8 @@ namespace DbDocjc
 #pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
                 _cmd.CommandText = sql;
 #pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
+                if (_rdr != null && !_rdr.IsClosed)
+                    _rdr.Close();
                 _rdr = _cmd.ExecuteReader();
                 return _rdr.HasRows;
             }
@@ -181,6 +183,8 @@ namespace DbDocjc
             {
                 hasError = true;
                 ErrorMsg = ex.Message;
+                if (!_rdr.IsClosed)
+                    _rdr.Close();
             }
             return false;
         }
@@ -208,7 +212,24 @@ namespace DbDocjc
                 }
                 yield return dict;
             }
+            _rdr.Close();
             yield break;
+        }
+
+        public static string sqlColumns(string table)
+        {
+            return $"show full fields from {table}";
+        }
+        public static string sqlIndexes(string table)
+        {
+            return $"show indexes from {table}";
+        }
+        public static string sqlForeignKeys(string table)
+        {
+            return $"SELECT `column_name`, `referenced_table_schema` AS foreign_db," +
+                                    "`referenced_table_name` AS foreign_table, `referenced_column_name`  AS foreign_column" +
+                                    " FROM `information_schema`.`KEY_COLUMN_USAGE` WHERE `constraint_schema` = SCHEMA()" +
+                                    $" AND `table_name` = '{table}' AND `referenced_column_name` IS NOT NULL ORDER BY `column_name`";
         }
 
 
