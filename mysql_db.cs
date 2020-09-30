@@ -24,7 +24,7 @@ namespace DbDocjc
             database = string.Empty;
         }
 
-        public void close()
+        public override void close()
         {
             if (conn != null)
             {

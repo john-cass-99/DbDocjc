@@ -13,9 +13,9 @@ namespace DbDocjc
 {
     public class htmlWriter : StreamWriter
     {
-        private mysql_db db { get; set; }
+        private _db db { get; set; }
 
-        public htmlWriter(string filename, mysql_db pdb)
+        public htmlWriter(string filename, _db pdb)
             : base(filename)
         {
             db = pdb;

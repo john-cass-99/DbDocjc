@@ -16,7 +16,7 @@ namespace DbDocjc
 {
     public partial class SelectObjects : Form
     {
-        private mysql_db db { get; set; }
+        private _db db { get; set; }
 
         private readonly Dictionary<string, Info> Information = new Dictionary<string, Info>()
         {
@@ -30,7 +30,7 @@ namespace DbDocjc
 
         private readonly Dictionary<string, string> htmlData = new Dictionary<string, string>();
 
-        public SelectObjects(mysql_db pdb)
+        public SelectObjects(_db pdb)
         {
             InitializeComponent();
             txtOutputPath.Text = Properties.Settings.Default.OutputPath;

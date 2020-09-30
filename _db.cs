@@ -86,7 +86,7 @@ namespace DbDocjc
 
         public abstract IEnumerator<Dictionary<string, object>> GetEnumerator();
 
-
+        public abstract void close();
 
     }
 }
