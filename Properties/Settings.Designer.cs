@@ -25,7 +25,7 @@ namespace DbDocjc.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("STUDY-DESKTOP\\SQLEXPRESS01")]
         public string Server {
             get {
                 return ((string)(this["Server"]));

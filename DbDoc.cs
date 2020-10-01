@@ -13,7 +13,9 @@ namespace DbDocjc
 {
     public partial class DbDoc : Form
     {
-        public _db db = new mysql_db();
+        // public _db db = new mysql_db();
+        public _db db = new sqlserver_db();
+
         public const string MsgTitle = "DbDocjc";
         public DbDoc()
         {
