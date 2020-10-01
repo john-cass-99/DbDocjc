@@ -24,9 +24,10 @@ A click-once installation is planned when the project has reached a sufficiently
 MySql supports comments for tables (but only when creating) and individual fields; there is no database comment facility. DbDocjc prompts for a description which appears on the title page and stores this in an XML file for future reference.
 Currently the project will document Tables, Indexes, Foreign Keys, Triggers, Create SQL and will list Stored Procedures and Functions. It produces html output which can be used as it stands or printed to PDF using (recommended) [PDF995](http://www.pdf995.com/). Events are not yet supported.
 
-Current work is on a branch which collects all the database interaction in a single class. This will facilitate supporting other types of database.
+The master branch contains a working project for MySql databases. Database queries are coded directly producing a fast, efficient solution. To enable other database types to be supported I have coded a database module as an abstract class from which derived classes for each database type can be coded. This is in the database_module branch because it is necessary to completely separate the database interaction code fron the output code this will not be as efficient as the master branch which ought to be the best choice for MySql databases.
+
+I have also started coding for SQL Server in a third branch, sql_server, which is some way off being completed.
 
 ## Possible enhancements
-* Extend to other types of database e.g. SQL Server.
 * Provide themes via CSS to give a variety of output styles.
 * Support database events.
