@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DbDoc));
             this.lblServer = new System.Windows.Forms.Label();
             this.lblTitle = new System.Windows.Forms.Label();
             this.txtServer = new System.Windows.Forms.TextBox();
@@ -185,6 +186,7 @@
             this.Status.Location = new System.Drawing.Point(0, 359);
             this.Status.Name = "Status";
             this.Status.Size = new System.Drawing.Size(629, 22);
+            this.Status.SizingGrip = false;
             this.Status.TabIndex = 12;
             this.Status.Text = "statusStrip1";
             // 
@@ -275,7 +277,8 @@
             this.Controls.Add(this.lblTitle);
             this.Controls.Add(this.lblServer);
             this.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "DbDoc";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;

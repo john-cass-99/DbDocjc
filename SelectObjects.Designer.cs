@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SelectObjects));
             this.lblTitle = new System.Windows.Forms.Label();
             this.txtOutputPath = new System.Windows.Forms.TextBox();
             this.lblOutputPath = new System.Windows.Forms.Label();
@@ -169,6 +170,8 @@
             this.Controls.Add(this.lblOutputPath);
             this.Controls.Add(this.lblTitle);
             this.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "SelectObjects";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
